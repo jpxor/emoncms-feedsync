@@ -12,10 +12,10 @@ type ServerInfo struct {
 }
 
 type Config struct {
-	Feeds    []string   `yaml:"feeds"`
-	Local    ServerInfo `yaml:"local"`
-	Remote   ServerInfo `yaml:"remote"`
-	Interval int        `yaml:"interval"`
+	FeedsFilter []string   `yaml:"feeds"`
+	Local       ServerInfo `yaml:"local"`
+	Remote      ServerInfo `yaml:"remote"`
+	Interval    int        `yaml:"interval"`
 }
 
 func readConfig(filename string) (*Config, error) {
