@@ -16,6 +16,7 @@ type Config struct {
 	Local       ServerInfo `yaml:"local"`
 	Remote      ServerInfo `yaml:"remote"`
 	Interval    int        `yaml:"interval"`
+	Start       int64      `yaml:"start"`
 }
 
 func readConfig(filename string) (*Config, error) {

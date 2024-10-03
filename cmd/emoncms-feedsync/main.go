@@ -42,16 +42,23 @@ func main() {
 	remoteFeeds = filterByNames(remoteFeeds, config.FeedsFilter)
 	remoteFeeds = filterByNames(remoteFeeds, emoncms.FeedNames(localFeeds))
 
-	for i := range remoteFeeds {
-		remotefeed := &remoteFeeds[i]
-		err := remote.Feed.TimeValue(remotefeed)
-		if err != nil {
-			fmt.Println("Error failed to fetch LastUpdated time and value:", err)
-			os.Exit(1)
+	if config.Start != 0 {
+		for i := range remoteFeeds {
+			remotefeed := &remoteFeeds[i]
+			remotefeed.LastUpdate = config.Start
 		}
-		if isUnixMilli(remotefeed.LastUpdate) {
-			fmt.Println("WARN: time in milliseconds!?", remotefeed.Name, remotefeed.LastUpdate)
-			remotefeed.LastUpdate /= 1000
+	} else {
+		for i := range remoteFeeds {
+			remotefeed := &remoteFeeds[i]
+			err := remote.Feed.TimeValue(remotefeed)
+			if err != nil {
+				fmt.Println("Error failed to fetch LastUpdated time and value:", err)
+				os.Exit(1)
+			}
+			if isUnixMilli(remotefeed.LastUpdate) {
+				fmt.Println("WARN: time in milliseconds!?", remotefeed.Name, remotefeed.LastUpdate)
+				remotefeed.LastUpdate /= 1000
+			}
 		}
 	}
 
