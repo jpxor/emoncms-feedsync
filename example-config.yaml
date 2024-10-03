@@ -1,0 +1,16 @@
+## sync: pushes local feeds to remote server.
+## does NOT create new feeds on remote, they need
+## to already exist
+local:
+    host: localhost:8081
+    apikey: read-only-key
+remote:
+    host: emoncms.org
+    apikey: read-write-key
+interval: 600
+
+## list feeds to sync, or leave empty to sync all
+## feeds found on remote server
+# feeds:
+#     - heatpump_outsideT
+#     - heatpump_roomT
