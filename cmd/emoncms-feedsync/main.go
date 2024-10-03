@@ -78,7 +78,7 @@ func main() {
 				continue
 			}
 
-			fmt.Println("\nSync:", remotefeed.Name)
+			fmt.Printf("\nSync: %s (interval: %ds)\n", remotefeed.Name, localfeed.Interval)
 			end := int64(0)
 
 			for end < now {
