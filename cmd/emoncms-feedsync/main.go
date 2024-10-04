@@ -73,11 +73,6 @@ func main() {
 				os.Exit(1)
 			}
 
-			timeSinceLastUpdate := now - remotefeed.LastUpdate
-			if timeSinceLastUpdate < localfeed.Interval {
-				continue
-			}
-
 			fmt.Printf("\nSync: %s (interval: %ds)\n", remotefeed.Name, localfeed.Interval)
 			end := int64(0)
 
