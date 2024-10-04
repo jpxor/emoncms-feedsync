@@ -16,7 +16,6 @@ type Feed struct {
 	LastUpdate int64   `json:"-"`
 }
 
-// end-point called 'list', but return a map for convenience
 func (c client) List() ([]Feed, error) {
 	url := fmt.Sprintf("http://%s/feed/list.json?meta=1&apikey=%s", c.host, c.apikey)
 	resp, err := http.Get(url)
