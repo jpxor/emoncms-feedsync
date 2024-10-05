@@ -7,6 +7,12 @@ This project is meant to be used when the built-in feature fails. Example, for a
 some of its services fail to start/run including the sync service.  I built this to run on my home server alongside 
 the docker EmonCMS instance.
 
+# What is EmonCMS?
+https://emoncms.org/site/home
+
+In their own words:
+> Emoncms is a powerful open-source web-app for processing, logging and visualising energy, temperature and other environmental data
+
 # Install and run on Linux server
 
 Build from source or download and extract release from tar file:
