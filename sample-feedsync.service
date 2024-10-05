@@ -1,0 +1,8 @@
+[Unit]
+Description=Emoncms Feed Sync Service
+After=multi-user.target
+
+[Service]
+ExecStart=/opt/emoncms-feedsync/emoncms-feedsync -c /opt/emoncms-feedsync/config.yaml
+WorkingDirectory=/opt/emoncms-feedsync
+Restart=always
