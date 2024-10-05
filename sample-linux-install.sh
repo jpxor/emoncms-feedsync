@@ -4,7 +4,7 @@
 sudo mkdir -p /opt/emoncms-feedsync
 
 # Copy the binary
-sudo cp ./emoncms-feedsync-v* /opt/emoncms-feedsync/emoncms-feedsync
+sudo cp ./emoncms-feedsync /opt/emoncms-feedsync/emoncms-feedsync
 sudo cp ./sample-config.yaml  /opt/emoncms-feedsync/config.yaml
 
 # Copy the service file
