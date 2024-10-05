@@ -1,5 +1,11 @@
 #!/bin/bash
 
+# Stop the service if it's already running
+if systemctl is-active --quiet emoncms-feedsync.service; then
+    sudo systemctl stop emoncms-feedsync.service
+    echo "Stopped emoncms-feedsync service."
+fi
+
 # Create the directory structure
 sudo mkdir -p /opt/emoncms-feedsync
 
