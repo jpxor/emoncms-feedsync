@@ -6,3 +6,6 @@ After=multi-user.target
 ExecStart=/opt/emoncms-feedsync/emoncms-feedsync -c /opt/emoncms-feedsync/config.yaml
 WorkingDirectory=/opt/emoncms-feedsync
 Restart=always
+
+[Install]
+WantedBy=multi-user.target
