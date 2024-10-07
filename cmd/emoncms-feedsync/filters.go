@@ -1,8 +1,8 @@
 package main
 
 import (
-	"fmt"
 	"jpxor/emoncms/feedsync/pkg/utils"
+	"strconv"
 	"strings"
 )
 
@@ -70,26 +70,26 @@ func ParseDataStr(datastr string) ([]DataPoint, error) {
 	return dataPoints, nil
 }
 
-func EncodeDataStr(data []DataPoint) (string, error) {
-	var sb strings.Builder
-
+func EncodeDataStr(data []DataPoint) string {
+	if len(data) == 0 {
+		return "[]"
+	}
 	// Estimate size: 4 bytes for "[[]]", 3 bytes for each separator "],[",
-	// and approximately 20 bytes per DataPoint (assuming 10 digits for timestamp and 8 for float)
+	// and approximately 20 bytes per DataPoint
 	estimatedSize := 4 + (len(data)-1)*3 + len(data)*20
-	sb.Grow(estimatedSize)
+	buf := make([]byte, 0, estimatedSize)
 
-	sb.WriteString("[[")
-
+	buf = append(buf, '[', '[')
 	for i, dp := range data {
 		if i > 0 {
-			sb.WriteString("],[")
+			buf = append(buf, ']', ',', '[')
 		}
-		sb.WriteString(fmt.Sprintf("%d,%g", dp.Timestamp, dp.Value))
+		buf = strconv.AppendInt(buf, dp.Timestamp, 10)
+		buf = append(buf, ',')
+		buf = strconv.AppendFloat(buf, float64(dp.Value), 'g', -1, 32)
 	}
-
-	sb.WriteString("]]")
-	return sb.String(), nil
-
+	buf = append(buf, ']', ']')
+	return string(buf)
 }
 
 func MinMaxFilter(min, max float32) Filter {
@@ -107,10 +107,6 @@ func MinMaxFilter(min, max float32) Filter {
 				filteredData = append(filteredData, datapoint)
 			}
 		}
-		encoded, err := EncodeDataStr(filteredData)
-		if err != nil {
-			return datastr, err
-		}
-		return encoded, nil
+		return EncodeDataStr(filteredData), nil
 	}
 }
