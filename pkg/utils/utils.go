@@ -57,3 +57,48 @@ func ParseFloatLowPrecision(s string) (float32, error) {
 	}
 	return result, nil
 }
+
+// encodes up to 3 decimal places: 0.123
+func AppendFloat(b []byte, f float32) []byte {
+	if f < 0 {
+		b = append(b, '-')
+		f = -f
+	}
+	intPart := uint64(f)
+	b = AppendUInt(b, intPart)
+
+	fracPart := uint64((f - float32(intPart)) * 1000)
+	if fracPart > 0 {
+		b = append(b, '.')
+
+		if fracPart < 10 {
+			b = append(b, '0', '0')
+		} else if fracPart < 100 {
+			b = append(b, '0')
+		}
+		b = AppendUInt(b, fracPart)
+		for len(b) > 0 && b[len(b)-1] == '0' {
+			b = b[:len(b)-1]
+		}
+		if len(b) > 0 && b[len(b)-1] == '.' {
+			b = b[:len(b)-1]
+		}
+	}
+	return b
+}
+
+func AppendUInt(b []byte, v uint64) []byte {
+	if v == 0 {
+		return append(b, '0')
+	}
+	var temp [20]byte
+	pos := len(temp)
+
+	for v > 0 {
+		pos--
+		temp[pos] = byte(v%10) + '0'
+		v /= 10
+	}
+	return append(b, temp[pos:]...)
+
+}

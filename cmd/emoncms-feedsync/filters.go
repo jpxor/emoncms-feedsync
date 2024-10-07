@@ -2,7 +2,6 @@ package main
 
 import (
 	"jpxor/emoncms/feedsync/pkg/utils"
-	"strconv"
 	"strings"
 )
 
@@ -84,9 +83,9 @@ func EncodeDataStr(data []DataPoint) string {
 		if i > 0 {
 			buf = append(buf, ']', ',', '[')
 		}
-		buf = strconv.AppendInt(buf, dp.Timestamp, 10)
+		buf = utils.AppendUInt(buf, uint64(dp.Timestamp))
 		buf = append(buf, ',')
-		buf = strconv.AppendFloat(buf, float64(dp.Value), 'g', -1, 32)
+		buf = utils.AppendFloat(buf, dp.Value)
 	}
 	buf = append(buf, ']', ']')
 	return string(buf)

@@ -65,3 +65,57 @@ func TestParseFloatLowPrecision(t *testing.T) {
 		})
 	}
 }
+
+func TestAppendFloat(t *testing.T) {
+	tests := []struct {
+		name     string
+		input    float32
+		initial  []byte
+		expected []byte
+	}{
+		{"Positive integer", 123, []byte(""), []byte("123")},
+		{"Negative integer", -456, []byte(""), []byte("-456")},
+		{"Positive float", 78.9, []byte(""), []byte("78.9")},
+		{"Negative float", -12.34, []byte(""), []byte("-12.34")},
+		{"Three decimal places", 0.123, []byte(""), []byte("0.123")},
+		{"More than three decimal places", 1.234567, []byte(""), []byte("1.234")},
+		{"Zero", 0, []byte(""), []byte("0")},
+		{"Append to existing", 5.67, []byte("Value: "), []byte("Value: 5.67")},
+		{"Very small positive", 0.001, []byte(""), []byte("0.001")},
+		{"Very small negative", -0.001, []byte(""), []byte("-0.001")},
+		{"Large number", 123456.789, []byte(""), []byte("123456.789")},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			result := AppendFloat(tt.initial, tt.input)
+			if string(result) != string(tt.expected) {
+				t.Errorf("AppendFloat() = %s, want %s", result, tt.expected)
+			}
+		})
+	}
+}
+
+func TestAppendUInt(t *testing.T) {
+	tests := []struct {
+		name     string
+		input    uint64
+		initial  []byte
+		expected []byte
+	}{
+		{"Zero", 0, []byte(""), []byte("0")},
+		{"Positive small", 123, []byte(""), []byte("123")},
+		{"Positive large", 9876543210, []byte(""), []byte("9876543210")},
+		{"Append to existing", 42, []byte("Number: "), []byte("Number: 42")},
+		{"Max int64", 9223372036854775807, []byte(""), []byte("9223372036854775807")},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			result := AppendUInt(tt.initial, tt.input)
+			if string(result) != string(tt.expected) {
+				t.Errorf("AppendUInt() = %s, want %s", result, tt.expected)
+			}
+		})
+	}
+}

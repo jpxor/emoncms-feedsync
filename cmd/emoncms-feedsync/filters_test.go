@@ -13,7 +13,7 @@ func BenchmarkParseDataStr(b *testing.B) {
 }
 
 func BenchmarkEncodeDataStr(b *testing.B) {
-	// 3717	    340324 ns/op	  122881 B/op	       2 allocs/op
+	// 8583	    127043 ns/op	  122880 B/op	       2 allocs/op
 	data, err := ParseDataStr(testData)
 	if err != nil {
 		panic(err)
