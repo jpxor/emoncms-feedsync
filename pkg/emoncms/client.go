@@ -1,8 +1,9 @@
 package emoncms
 
 type client struct {
-	host   string
-	apikey string
+	host     string
+	apikey   string
+	urlLimit int
 }
 
 type FeedAPI interface {
@@ -17,8 +18,13 @@ type Client struct {
 }
 
 func NewClient(host, apikey string) Client {
-	c := client{host, apikey}
+	c := client{host, apikey, 2000}
 	return Client{
 		Feed: &c,
 	}
+}
+
+func (c *Client) SetUrlLimit(limit int) {
+	internalClient := c.Feed.(*client)
+	internalClient.urlLimit = limit
 }

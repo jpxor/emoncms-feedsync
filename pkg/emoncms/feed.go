@@ -91,14 +91,13 @@ func (c client) Insert(feed Feed, data string) error {
 		return nil
 	}
 
-	const urlSizeLimit = 8000
 	const format = "https://%s/feed/insert.json?id=%s&apikey=%s&data=%s"
 	formattedWithoutData := fmt.Sprintf(format, c.host, feed.ID, c.apikey, "")
 
 	// ensure the url stays under an acceptable limit (eg, 2000 bytes long)
-	if len(data)+len(formattedWithoutData) > urlSizeLimit {
+	if len(data)+len(formattedWithoutData) > c.urlLimit {
 		// split the data string and send two requests
-		split := urlSizeLimit - len(formattedWithoutData)
+		split := c.urlLimit - len(formattedWithoutData)
 		left, right := splitFeedDataString(split, data)
 
 		// oh ya, we're recursing

@@ -17,6 +17,7 @@ type Config struct {
 	Remote      ServerInfo `yaml:"remote"`
 	Interval    int        `yaml:"interval"`
 	Start       int64      `yaml:"start"`
+	UrlLimit    int64      `yaml:"max-url-len"`
 }
 
 func readConfig(filename string) (*Config, error) {

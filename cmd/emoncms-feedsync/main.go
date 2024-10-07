@@ -44,6 +44,10 @@ func main() {
 	remoteFeeds = filterByNames(remoteFeeds, config.FeedsFilter)
 	remoteFeeds = filterByNames(remoteFeeds, emoncms.FeedNames(localFeeds))
 
+	if config.UrlLimit > 0 {
+		remote.SetUrlLimit(int(config.UrlLimit))
+	}
+
 	if config.Start != 0 {
 		for i := range remoteFeeds {
 			remotefeed := &remoteFeeds[i]
