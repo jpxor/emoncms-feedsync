@@ -19,6 +19,8 @@ func main() {
 		os.Exit(1)
 	}
 
+	filters := NewFilterMap()
+
 	local := emoncms.NewClient(config.Local.Host, config.Local.APIKey)
 	remote := emoncms.NewClient(config.Remote.Host, config.Remote.APIKey)
 
@@ -83,6 +85,13 @@ func main() {
 				data, end, err = local.Feed.Data(localfeed, remotefeed.LastUpdate, now)
 				if err != nil {
 					fmt.Println("ERROR failed to get data:", err)
+					break
+				}
+
+				// filter data (ie remove outliers)
+				data, err = filters.Apply(remotefeed.Name, data)
+				if err != nil {
+					fmt.Println("ERROR failed to filter data:", err)
 					break
 				}
 
