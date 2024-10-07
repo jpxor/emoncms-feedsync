@@ -87,16 +87,19 @@ func (c client) Data(feed Feed, start, end int64) (string, int64, error) {
 }
 
 func (c client) Insert(feed Feed, data string) error {
-	const format = "https://%s/feed/insert.json?id=%s&apikey=%s&data=%s"
-
 	if data == "[]" || data == "" { // no data to send
 		return nil
 	}
 
+	const urlSizeLimit = 8000
+	const format = "https://%s/feed/insert.json?id=%s&apikey=%s&data=%s"
+	formattedWithoutData := fmt.Sprintf(format, c.host, feed.ID, c.apikey, "")
+
 	// ensure the url stays under an acceptable limit (eg, 2000 bytes long)
-	if len(data)+len(format) > 2000 {
+	if len(data)+len(formattedWithoutData) > urlSizeLimit {
 		// split the data string and send two requests
-		left, right := splitFeedDataString(data)
+		split := urlSizeLimit - len(formattedWithoutData)
+		left, right := splitFeedDataString(split, data)
 
 		// oh ya, we're recursing
 		err := c.Insert(feed, left)

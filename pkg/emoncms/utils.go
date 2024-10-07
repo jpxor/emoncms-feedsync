@@ -4,19 +4,19 @@ import (
 	"strings"
 )
 
-func splitFeedDataString(data string) (string, string) {
+func splitFeedDataString(targetSplit int, data string) (string, string) {
 	// data string format: [[f,f],[f,f],[f,f]]
 	if len(data) == 0 {
 		return data, ""
 	}
 
-	halfdata := data[:2+len(data)/2]
-	splitIndex := strings.LastIndex(halfdata, "],[")
+	targetSplit = min(targetSplit, 2+len(data)/2)
+	halfdata := data[:targetSplit]
 
+	splitIndex := strings.LastIndex(halfdata, "],[")
 	if splitIndex == -1 {
 		return data, ""
 	}
-
 	left := data[:splitIndex+1] + "]"
 	right := "[" + data[splitIndex+2:]
 	return left, right

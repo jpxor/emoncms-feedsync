@@ -45,7 +45,7 @@ func TestSplitFeedDataString(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			gotLeft, gotRight := splitFeedDataString(tt.input)
+			gotLeft, gotRight := splitFeedDataString(2000, tt.input)
 			if gotLeft != tt.wantLeft {
 				t.Errorf("splitFeedDataString() gotLeft = %v, want %v", gotLeft, tt.wantLeft)
 			}
