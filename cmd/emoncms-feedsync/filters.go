@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"jpxor/emoncms/feedsync/pkg/utils"
 	"strings"
 )
@@ -11,10 +12,28 @@ type FilterMap struct {
 	filtermap map[string]Filter
 }
 
-func NewFilterMap() FilterMap {
-	return FilterMap{
+func NewFilterMap(fconfigs []FilterConfig) (*FilterMap, error) {
+	fm := FilterMap{
 		filtermap: make(map[string]Filter),
 	}
+	for _, fconfig := range fconfigs {
+		switch fconfig.Name {
+
+		case "minmax":
+			if len(fconfig.Args) != 2 {
+				return nil, fmt.Errorf("minmax requires two args: [min, max]")
+			}
+			min := fconfig.Args[0]
+			max := fconfig.Args[1]
+			for _, feedName := range fconfig.Feeds {
+				fm.Add(feedName, MinMaxFilter(min, max))
+			}
+
+		default:
+			return nil, fmt.Errorf("unknown filter name: %s", fconfig.Name)
+		}
+	}
+	return &fm, nil
 }
 
 func (m FilterMap) Apply(name, data string) (string, error) {

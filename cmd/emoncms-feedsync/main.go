@@ -19,7 +19,11 @@ func main() {
 		os.Exit(1)
 	}
 
-	filters := NewFilterMap()
+	filters, err := NewFilterMap(config.Filters)
+	if err != nil {
+		fmt.Println("Error setting filters:", err)
+		os.Exit(1)
+	}
 
 	local := emoncms.NewClient(config.Local.Host, config.Local.APIKey)
 	remote := emoncms.NewClient(config.Remote.Host, config.Remote.APIKey)
@@ -98,6 +102,8 @@ func main() {
 					fmt.Println("ERROR failed to filter data:", err)
 					break
 				}
+
+				fmt.Println("sending", len(data), "bytes, from time:", remotefeed.LastUpdate, "to time:", end)
 
 				err = remote.Feed.Insert(*remotefeed, data)
 				if err != nil {
