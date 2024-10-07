@@ -37,3 +37,26 @@ func EncodeDataStr(data [][]float64) (string, error) {
 	}
 	return string(encoded), nil
 }
+
+func MinMaxFilter(min, max float64) Filter {
+	test := func(val float64) bool {
+		return val >= min && val <= max
+	}
+	return func(datastr string) (string, error) {
+		data, err := ParseDataStr(datastr)
+		if err != nil {
+			return datastr, err
+		}
+		var filteredData [][]float64
+		for _, datapoint := range data {
+			if test(datapoint[1]) {
+				filteredData = append(filteredData, datapoint)
+			}
+		}
+		encoded, err := EncodeDataStr(filteredData)
+		if err != nil {
+			return datastr, err
+		}
+		return encoded, nil
+	}
+}
