@@ -2,7 +2,7 @@ package main
 
 import (
 	"fmt"
-	"strconv"
+	"jpxor/emoncms/feedsync/pkg/utils"
 	"strings"
 )
 
@@ -46,7 +46,7 @@ func ParseDataStr(datastr string) ([]DataPoint, error) {
 		if idx == -1 {
 			break
 		}
-		timestamp, err := strconv.ParseInt(datastr[:idx], 10, 64)
+		timestamp, err := utils.ParseUnixTimestamp(datastr[:idx])
 		if err != nil {
 			return nil, err
 		}
@@ -55,7 +55,7 @@ func ParseDataStr(datastr string) ([]DataPoint, error) {
 		if idx == -1 {
 			break
 		}
-		value, err := strconv.ParseFloat(datastr[:idx], 32)
+		value, err := utils.ParseFloatLowPrecision(datastr[:idx])
 		if err != nil {
 			return nil, err
 		}

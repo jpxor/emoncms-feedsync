@@ -3,7 +3,7 @@ package main
 import "testing"
 
 func BenchmarkParseDataStr(b *testing.B) {
-	// 4531	    262630 ns/op	   49152 B/op	       1 allocs/op
+	// 11720	     98965 ns/op	   49152 B/op	       1 allocs/op
 	for i := 0; i < b.N; i++ {
 		_, err := ParseDataStr(testData)
 		if err != nil {
