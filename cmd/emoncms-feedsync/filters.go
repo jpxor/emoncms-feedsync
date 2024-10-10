@@ -153,7 +153,7 @@ func MinMaxFilter(min, max float32) Filter {
 	}
 }
 
-func MedianFilter(window int, maxdiff float32) Filter {
+func MedianFilter(windowSize int, maxdiff float32) Filter {
 	test := func(median, val float32) bool {
 		return math.Abs(float64(median-val)) <= float64(maxdiff)
 	}
@@ -164,8 +164,8 @@ func MedianFilter(window int, maxdiff float32) Filter {
 		}
 		var filteredData []DataPoint
 		for i, datapoint := range data {
-			left := max(0, i-10)
-			right := min(i+10, len(data))
+			left := max(0, i-windowSize/2)
+			right := min(i+windowSize/2, len(data))
 			window := data[left:right]
 
 			median := stats.MedianValue(extractValues(window))
