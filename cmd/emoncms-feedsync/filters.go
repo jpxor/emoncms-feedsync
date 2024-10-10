@@ -2,7 +2,9 @@ package main
 
 import (
 	"fmt"
+	"jpxor/emoncms/feedsync/pkg/stats"
 	"jpxor/emoncms/feedsync/pkg/utils"
+	"math"
 	"strings"
 )
 
@@ -27,6 +29,16 @@ func NewFilterMap(fconfigs []FilterConfig) (*FilterMap, error) {
 			max := fconfig.Args[1]
 			for _, feedName := range fconfig.Feeds {
 				fm.Add(feedName, MinMaxFilter(min, max))
+			}
+
+		case "median":
+			if len(fconfig.Args) != 2 {
+				return nil, fmt.Errorf("median requires two args: [window size, max offset from median]")
+			}
+			window := int(fconfig.Args[0])
+			maxoff := fconfig.Args[1]
+			for _, feedName := range fconfig.Feeds {
+				fm.Add(feedName, MedianFilter(window, maxoff))
 			}
 
 		default:
@@ -114,6 +126,14 @@ func EncodeDataStr(data []DataPoint) string {
 	return string(buf)
 }
 
+func extractValues(window []DataPoint) []float32 {
+	values := make([]float32, len(window))
+	for i, dp := range window {
+		values[i] = dp.Value
+	}
+	return values
+}
+
 func MinMaxFilter(min, max float32) Filter {
 	test := func(val float32) bool {
 		return val >= min && val <= max
@@ -126,6 +146,30 @@ func MinMaxFilter(min, max float32) Filter {
 		var filteredData []DataPoint
 		for _, datapoint := range data {
 			if test(datapoint.Value) {
+				filteredData = append(filteredData, datapoint)
+			}
+		}
+		return EncodeDataStr(filteredData), nil
+	}
+}
+
+func MedianFilter(window int, maxdiff float32) Filter {
+	test := func(median, val float32) bool {
+		return math.Abs(float64(median-val)) <= float64(maxdiff)
+	}
+	return func(datastr string) (string, error) {
+		data, err := ParseDataStr(datastr)
+		if err != nil {
+			return datastr, err
+		}
+		var filteredData []DataPoint
+		for i, datapoint := range data {
+			left := max(0, i-10)
+			right := min(i+10, len(data))
+			window := data[left:right]
+
+			median := stats.MedianValue(extractValues(window))
+			if test(median, datapoint.Value) {
 				filteredData = append(filteredData, datapoint)
 			}
 		}
