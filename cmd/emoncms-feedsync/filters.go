@@ -54,10 +54,13 @@ type DataPoint struct {
 
 func ParseDataStr(datastr string) ([]DataPoint, error) {
 	capacity := (1 + strings.Count(datastr, ",")) / 2
+	if capacity == 0 {
+		return []DataPoint{}, nil
+	}
 	dataPoints := make([]DataPoint, 0, capacity)
 
 	// Remove outer brackets
-	datastr = datastr[2 : len(datastr)-2]
+	datastr = datastr[2 : len(datastr)-1]
 
 	for len(datastr) > 0 {
 		idx := strings.IndexByte(datastr, ',')
@@ -73,12 +76,13 @@ func ParseDataStr(datastr string) ([]DataPoint, error) {
 		if idx == -1 {
 			break
 		}
-		value, err := utils.ParseFloatLowPrecision(datastr[:idx])
-		if err != nil {
-			return nil, err
+		if datastr[:idx] != "null" {
+			value, err := utils.ParseFloatLowPrecision(datastr[:idx])
+			if err != nil {
+				return nil, err
+			}
+			dataPoints = append(dataPoints, DataPoint{Timestamp: timestamp, Value: float32(value)})
 		}
-		dataPoints = append(dataPoints, DataPoint{Timestamp: timestamp, Value: float32(value)})
-
 		if len(datastr) > idx+3 {
 			datastr = datastr[idx+3:]
 		} else {
